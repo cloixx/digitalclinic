@@ -1,0 +1,31 @@
+export '../../../flutter_flow/lat_lng.dart';
+export 'package:supabase_flutter/supabase_flutter.dart' hide Provider;
+
+export '../supabase.dart';
+export 'row.dart';
+export 'table.dart';
+
+export 'tables/d_medication_register.dart';
+export 'tables/d_a_c_h_i_interventions.dart';
+export 'tables/d_researches.dart';
+export 'tables/appointed_researches.dart';
+export 'tables/chambers.dart';
+export 'tables/countries.dart';
+export 'tables/log_001_admission.dart';
+export 'tables/building.dart';
+export 'tables/beds.dart';
+export 'tables/hospital_staff.dart';
+export 'tables/departments.dart';
+export 'tables/postmortem.dart';
+export 'tables/users_i_ds_roles.dart';
+export 'tables/d_i_c_d_diagnoses.dart';
+export 'tables/overall_states.dart';
+export 'tables/doctors_diaries.dart';
+export 'tables/interventions.dart';
+export 'tables/d_departments_codes.dart';
+export 'tables/covid_tests.dart';
+export 'tables/patients.dart';
+export 'tables/related_persons.dart';
+export 'tables/intervention_case.dart';
+export 'tables/admissions.dart';
+export 'tables/incapacity_certificates.dart';

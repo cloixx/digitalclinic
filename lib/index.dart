@@ -1,0 +1,44 @@
+// Export pages
+export '/patient/home_page_patient/home_page_patient_widget.dart'
+    show HomePagePatientWidget;
+export '/authentication/email_auth/e_mail_login/e_mail_login_widget.dart'
+    show EMailLoginWidget;
+export '/pages/onboarding_page/onboarding_page_widget.dart'
+    show OnboardingPageWidget;
+export '/authentication/e_mail_registration/e_mail_registration_widget.dart'
+    show EMailRegistrationWidget;
+export '/doctor/home_page_doctor/home_page_doctor_widget.dart'
+    show HomePageDoctorWidget;
+export '/nurse/home_page_nurse/home_page_nurse_widget.dart'
+    show HomePageNurseWidget;
+export '/ceo/home_page_c_e_o/home_page_c_e_o_widget.dart'
+    show HomePageCEOWidget;
+export '/pages/welcome_page/welcome_page_widget.dart' show WelcomePageWidget;
+export '/pages/home_page_logged_no_role/home_page_logged_no_role_widget.dart'
+    show HomePageLoggedNoRoleWidget;
+export '/medical_c_e_o/home_page_medical_c_e_o/home_page_medical_c_e_o_widget.dart'
+    show HomePageMedicalCEOWidget;
+export '/relative/home_page_relative/home_page_relative_widget.dart'
+    show HomePageRelativeWidget;
+export '/orderly/home_page_orderly/home_page_orderly_widget.dart'
+    show HomePageOrderlyWidget;
+export '/admin/home_page_admin/home_page_admin_widget.dart'
+    show HomePageAdminWidget;
+export '/authentication/email_auth/e_mail_reset_password/e_mail_reset_password_widget.dart'
+    show EMailResetPasswordWidget;
+export '/authentication/phone_auth/phone_login/phone_login_widget.dart'
+    show PhoneLoginWidget;
+export '/authentication/phone_auth/verify_mobile/verify_mobile_widget.dart'
+    show VerifyMobileWidget;
+export '/pages/home_page_logged_phone_no_role/home_page_logged_phone_no_role_widget.dart'
+    show HomePageLoggedPhoneNoRoleWidget;
+export '/pages/welcome_page_copy/welcome_page_copy_widget.dart'
+    show WelcomePageCopyWidget;
+export '/receptionist/home_page_receptionist/home_page_receptionist_widget.dart'
+    show HomePageReceptionistWidget;
+export '/registered/home_page_registered/home_page_registered_widget.dart'
+    show HomePageRegisteredWidget;
+export '/authentication/phone_auth/phone_login_superbase/phone_login_superbase_widget.dart'
+    show PhoneLoginSuperbaseWidget;
+export '/h_r_folder/home_page_h_r/home_page_h_r_widget.dart'
+    show HomePageHRWidget;
