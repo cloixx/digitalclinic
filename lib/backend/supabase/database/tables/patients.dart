@@ -44,14 +44,17 @@ class PatientsRow extends SupabaseDataRow {
   double? get citizenship => getField<double>('citizenship');
   set citizenship(double? value) => setField<double>('citizenship', value);
 
-  String? get addressCity => getField<String>('addressCity');
-  set addressCity(String? value) => setField<String>('addressCity', value);
+  String? get addressPlaceName => getField<String>('addressPlaceName');
+  set addressPlaceName(String? value) =>
+      setField<String>('addressPlaceName', value);
 
-  String? get addressFlat => getField<String>('addressFlat');
-  set addressFlat(String? value) => setField<String>('addressFlat', value);
+  String? get addressFlatNum => getField<String>('addressFlatNum');
+  set addressFlatNum(String? value) =>
+      setField<String>('addressFlatNum', value);
 
-  String? get addressHouse => getField<String>('addressHouse');
-  set addressHouse(String? value) => setField<String>('addressHouse', value);
+  String? get addressBuildingNum => getField<String>('addressBuildingNum');
+  set addressBuildingNum(String? value) =>
+      setField<String>('addressBuildingNum', value);
 
   String? get addressOblast => getField<String>('addressOblast');
   set addressOblast(String? value) => setField<String>('addressOblast', value);
@@ -77,18 +80,18 @@ class PatientsRow extends SupabaseDataRow {
   bool? get isInvalid => getField<bool>('isInvalid');
   set isInvalid(bool? value) => setField<bool>('isInvalid', value);
 
-  int? get invalidGroup => getField<int>('invalidGroup');
-  set invalidGroup(int? value) => setField<int>('invalidGroup', value);
+  String? get invalidGroup => getField<String>('invalidGroup');
+  set invalidGroup(String? value) => setField<String>('invalidGroup', value);
 
   String? get invalidType => getField<String>('invalidType ');
   set invalidType(String? value) => setField<String>('invalidType ', value);
 
-  int? get bloodGroup => getField<int>('bloodGroup ');
-  set bloodGroup(int? value) => setField<int>('bloodGroup ', value);
+  String? get bloodGroup => getField<String>('bloodGroup ');
+  set bloodGroup(String? value) => setField<String>('bloodGroup ', value);
 
-  bool? get bloodRhesusFactor => getField<bool>('bloodRhesusFactor');
-  set bloodRhesusFactor(bool? value) =>
-      setField<bool>('bloodRhesusFactor', value);
+  String? get bloodRhesusFactor => getField<String>('bloodRhesusFactor');
+  set bloodRhesusFactor(String? value) =>
+      setField<String>('bloodRhesusFactor', value);
 
   bool? get isAllergyReactionMedicaments =>
       getField<bool>('isAllergyReactionMedicaments');
@@ -108,8 +111,8 @@ class PatientsRow extends SupabaseDataRow {
   set insurancePoliceNumber(String? value) =>
       setField<String>('insurancePoliceNumber', value);
 
-  String? get ehealthID => getField<String>('EhealthID');
-  set ehealthID(String? value) => setField<String>('EhealthID', value);
+  String? get ehealthUID => getField<String>('EhealthUID');
+  set ehealthUID(String? value) => setField<String>('EhealthUID', value);
 
   String? get patientPhoneNumber => getField<String>('patientPhoneNumber');
   set patientPhoneNumber(String? value) =>
@@ -136,34 +139,41 @@ class PatientsRow extends SupabaseDataRow {
   double? get patientHeight => getField<double>('patientHeight');
   set patientHeight(double? value) => setField<double>('patientHeight', value);
 
-  dynamic? get patientWeightIn => getField<dynamic>('patientWeightIn');
-  set patientWeightIn(dynamic? value) =>
-      setField<dynamic>('patientWeightIn', value);
-
-  dynamic? get coefficientHeightWeight =>
-      getField<dynamic>('coefficientHeightWeight');
-  set coefficientHeightWeight(dynamic? value) =>
-      setField<dynamic>('coefficientHeightWeight', value);
-
   DateTime? get dateOfDeath => getField<DateTime>('dateOfDeath');
   set dateOfDeath(DateTime? value) => setField<DateTime>('dateOfDeath', value);
 
-  String get subjectID => getField<String>('subjectID')!;
-  set subjectID(String value) => setField<String>('subjectID', value);
+  String get id => getField<String>('id')!;
+  set id(String value) => setField<String>('id', value);
 
   DateTime? get vasermanReactionDate =>
       getField<DateTime>('vasermanReactionDate');
   set vasermanReactionDate(DateTime? value) =>
       setField<DateTime>('vasermanReactionDate', value);
 
-  bool? get vasermanReactionResult => getField<bool>('vasermanReactionResult');
-  set vasermanReactionResult(bool? value) =>
-      setField<bool>('vasermanReactionResult', value);
+  bool? get isVasermanReactionResult =>
+      getField<bool>('isVasermanReactionResult');
+  set isVasermanReactionResult(bool? value) =>
+      setField<bool>('isVasermanReactionResult', value);
 
-  int? get patientAge => getField<int>('patientAge');
-  set patientAge(int? value) => setField<int>('patientAge', value);
+  bool? get isIdentified => getField<bool>('is_identified');
+  set isIdentified(bool? value) => setField<bool>('is_identified', value);
 
-  PostgresTime? get timeOfDeath => getField<PostgresTime>('timeOfDeath');
-  set timeOfDeath(PostgresTime? value) =>
-      setField<PostgresTime>('timeOfDeath', value);
+  bool? get isConsentToProcessingPersonalData =>
+      getField<bool>('is_consent_to_processing_personal_data');
+  set isConsentToProcessingPersonalData(bool? value) =>
+      setField<bool>('is_consent_to_processing_personal_data', value);
+
+  String? get userProfileID => getField<String>('user_profile_ID');
+  set userProfileID(String? value) =>
+      setField<String>('user_profile_ID', value);
+
+  String? get patientPhotoUrl => getField<String>('patientPhotoUrl');
+  set patientPhotoUrl(String? value) =>
+      setField<String>('patientPhotoUrl', value);
+
+  DateTime? get createdAt => getField<DateTime>('created_at');
+  set createdAt(DateTime? value) => setField<DateTime>('created_at', value);
+
+  String? get email => getField<String>('email');
+  set email(String? value) => setField<String>('email', value);
 }

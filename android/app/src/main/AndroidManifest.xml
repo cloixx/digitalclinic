@@ -45,7 +45,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="digitalclinic" android:host="digitalclinic.ua" />
+                <data android:scheme="digitalclinic" android:host="digitalclinic.com.ua" />
             </intent-filter>
 
         </activity>

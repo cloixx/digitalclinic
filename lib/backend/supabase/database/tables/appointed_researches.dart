@@ -15,9 +15,6 @@ class AppointedResearchesRow extends SupabaseDataRow {
   @override
   SupabaseTable get table => AppointedResearchesTable();
 
-  int get id => getField<int>('id')!;
-  set id(int value) => setField<int>('id', value);
-
   DateTime? get appointmentDate => getField<DateTime>('appointment_date');
   set appointmentDate(DateTime? value) =>
       setField<DateTime>('appointment_date', value);
@@ -27,12 +24,6 @@ class AppointedResearchesRow extends SupabaseDataRow {
   set appointmentTime(PostgresTime? value) =>
       setField<PostgresTime>('appointment_time', value);
 
-  String? get researchID => getField<String>('researchID');
-  set researchID(String? value) => setField<String>('researchID', value);
-
-  String? get subjectID => getField<String>('subjectID');
-  set subjectID(String? value) => setField<String>('subjectID', value);
-
   DateTime? get executionDate => getField<DateTime>('execution_date');
   set executionDate(DateTime? value) =>
       setField<DateTime>('execution_date', value);
@@ -40,6 +31,15 @@ class AppointedResearchesRow extends SupabaseDataRow {
   PostgresTime? get executionTime => getField<PostgresTime>('execution_time');
   set executionTime(PostgresTime? value) =>
       setField<PostgresTime>('execution_time', value);
+
+  String? get id => getField<String>('id');
+  set id(String? value) => setField<String>('id', value);
+
+  String? get researchID => getField<String>('researchID');
+  set researchID(String? value) => setField<String>('researchID', value);
+
+  String? get subjectID => getField<String>('subjectID');
+  set subjectID(String? value) => setField<String>('subjectID', value);
 
   String? get executionDoctorID => getField<String>('execution_doctorID');
   set executionDoctorID(String? value) =>

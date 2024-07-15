@@ -17,8 +17,8 @@ class AdmissionsRow extends SupabaseDataRow {
   DateTime? get admitDate => getField<DateTime>('admitDate');
   set admitDate(DateTime? value) => setField<DateTime>('admitDate', value);
 
-  String? get subjectID => getField<String>('subjectID');
-  set subjectID(String? value) => setField<String>('subjectID', value);
+  String? get patientID => getField<String>('patientID');
+  set patientID(String? value) => setField<String>('patientID', value);
 
   DateTime? get dischDate => getField<DateTime>('dischDate');
   set dischDate(DateTime? value) => setField<DateTime>('dischDate', value);
@@ -64,14 +64,15 @@ class AdmissionsRow extends SupabaseDataRow {
   set isHospitalExpireFlag(bool? value) =>
       setField<bool>('isHospitalExpireFlag', value);
 
-  String? get diagnosisIn => getField<String>('diagnosisIn');
-  set diagnosisIn(String? value) => setField<String>('diagnosisIn', value);
+  String? get diagnosisInCode => getField<String>('diagnosisInCode');
+  set diagnosisInCode(String? value) =>
+      setField<String>('diagnosisInCode', value);
 
-  double? get departmentIn => getField<double>('departmentIn');
-  set departmentIn(double? value) => setField<double>('departmentIn', value);
+  int? get departmentIn => getField<int>('departmentIn');
+  set departmentIn(int? value) => setField<int>('departmentIn', value);
 
-  double? get departmentOut => getField<double>('departmentOut');
-  set departmentOut(double? value) => setField<double>('departmentOut', value);
+  int? get departmentOut => getField<int>('departmentOut');
+  set departmentOut(int? value) => setField<int>('departmentOut', value);
 
   double? get medicalDirectionNumber =>
       getField<double>('medicalDirectionNumber');
@@ -87,11 +88,11 @@ class AdmissionsRow extends SupabaseDataRow {
   set arterialPressureIn(String? value) =>
       setField<String>('arterialPressureIn', value);
 
-  int? get hamberNumberIn => getField<int>('сhamberNumberIn');
-  set hamberNumberIn(int? value) => setField<int>('сhamberNumberIn', value);
+  int? get chamberNumber => getField<int>('chamberNumber');
+  set chamberNumber(int? value) => setField<int>('chamberNumber', value);
 
-  int? get bedNumberIn => getField<int>('bedNumberIn');
-  set bedNumberIn(int? value) => setField<int>('bedNumberIn', value);
+  int? get bedNumber => getField<int>('bedNumber');
+  set bedNumber(int? value) => setField<int>('bedNumber', value);
 
   int? get hospitalityDays => getField<int>('hospitalityDays');
   set hospitalityDays(int? value) => setField<int>('hospitalityDays', value);
@@ -307,8 +308,9 @@ class AdmissionsRow extends SupabaseDataRow {
   set deathTime(PostgresTime? value) =>
       setField<PostgresTime>('deathTime', value);
 
-  bool? get admissionType => getField<bool>('admissionType');
-  set admissionType(bool? value) => setField<bool>('admissionType', value);
+  bool? get isAdmissionUrgent => getField<bool>('isAdmissionUrgent');
+  set isAdmissionUrgent(bool? value) =>
+      setField<bool>('isAdmissionUrgent', value);
 
   List<String> get relatedPersonsIDs =>
       getListField<String>('relatedPersonsIDs');
@@ -410,12 +412,35 @@ class AdmissionsRow extends SupabaseDataRow {
   set postMortemDiagnosisMain1(String? value) =>
       setField<String>('postMortemDiagnosisMain1', value);
 
-  String? get incapacitySertificates =>
-      getField<String>('incapacitySertificates');
-  set incapacitySertificates(String? value) =>
-      setField<String>('incapacitySertificates', value);
+  String? get incapacitySertificate =>
+      getField<String>('incapacitySertificate');
+  set incapacitySertificate(String? value) =>
+      setField<String>('incapacitySertificate', value);
 
   List<String> get interventions => getListField<String>('interventions');
   set interventions(List<String>? value) =>
       setListField<String>('interventions', value);
+
+  String? get diagnosisInName => getField<String>('diagnosisInName');
+  set diagnosisInName(String? value) =>
+      setField<String>('diagnosisInName', value);
+
+  bool? get isClosed => getField<bool>('isClosed');
+  set isClosed(bool? value) => setField<bool>('isClosed', value);
+
+  int? get departmentCurrent => getField<int>('department_current');
+  set departmentCurrent(int? value) =>
+      setField<int>('department_current', value);
+
+  String? get doctorCurrent => getField<String>('doctor_current');
+  set doctorCurrent(String? value) => setField<String>('doctor_current', value);
+
+  bool? get isIncapacityCertificateNeed =>
+      getField<bool>('isIncapacityCertificateNeed');
+  set isIncapacityCertificateNeed(bool? value) =>
+      setField<bool>('isIncapacityCertificateNeed', value);
+
+  List<String> get doctorsInChat => getListField<String>('doctors_in_chat');
+  set doctorsInChat(List<String>? value) =>
+      setListField<String>('doctors_in_chat', value);
 }

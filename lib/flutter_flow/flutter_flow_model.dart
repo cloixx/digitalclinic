@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
+import 'flutter_flow_util.dart';
 
 Widget wrapWithModel<T extends FlutterFlowModel>({
   required T model,
@@ -34,7 +35,7 @@ T createModel<T extends FlutterFlowModel>(
   return model;
 }
 
-abstract class FlutterFlowModel {
+abstract class FlutterFlowModel<W extends Widget> {
   // Initialization methods
   bool _isInitialized = false;
   void initState(BuildContext context);
@@ -43,7 +44,13 @@ abstract class FlutterFlowModel {
       initState(context);
       _isInitialized = true;
     }
+    if (context.widget is W) _widget = context.widget as W;
   }
+
+  // The widget associated with this model. This is useful for accessing the
+  // parameters of the widget, for example.
+  W? _widget;
+  W? get widget => _widget;
 
   // Dispose methods
   // Whether to dispose this model when the corresponding widget is
@@ -55,6 +62,8 @@ abstract class FlutterFlowModel {
     if (disposeOnWidgetDisposal) {
       dispose();
     }
+    // Remove reference to widget for garbage collection purposes.
+    _widget = null;
   }
 
   // Whether to update the containing page / component on updates.
@@ -102,13 +111,13 @@ class FlutterFlowDynamicModels<T extends FlutterFlowModel> {
         .toList();
   }
 
-  S? getValueAtIndex<S>(int index, S Function(T) getValue) {
+  S? getValueAtIndex<S>(int index, S? Function(T) getValue) {
     final uniqueKey =
         _childrenIndexes.entries.firstWhereOrNull((e) => e.value == index)?.key;
     return getValueForKey(uniqueKey, getValue);
   }
 
-  S? getValueForKey<S>(String? uniqueKey, S Function(T) getValue) {
+  S? getValueForKey<S>(String? uniqueKey, S? Function(T) getValue) {
     final model = _childrenModels[uniqueKey];
     return model != null ? getValue(model) : null;
   }
@@ -131,7 +140,7 @@ class FlutterFlowDynamicModels<T extends FlutterFlowModel> {
             .difference(_activeKeys!)
             // Remove and dispose of unused models since they are  not being used
             // elsewhere and would not otherwise be disposed.
-            .forEach((k) => _childrenModels.remove(k)?.dispose());
+            .forEach((k) => _childrenModels.remove(k)?.maybeDispose());
         _activeKeys = null;
       });
     }

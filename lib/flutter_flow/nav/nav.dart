@@ -3,15 +3,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:page_transition/page_transition.dart';
-import '../flutter_flow_theme.dart';
-import '../../backend/backend.dart';
-import '/backend/supabase/supabase.dart';
-import '../../auth/base_auth_user_provider.dart';
+import 'package:provider/provider.dart';
 
-import '../../index.dart';
-import '../../main.dart';
-import '../lat_lng.dart';
-import '../place.dart';
+import '/backend/schema/structs/index.dart';
+import '/backend/schema/enums/enums.dart';
+import '/backend/supabase/supabase.dart';
+
+import '/auth/base_auth_user_provider.dart';
+
+import '/index.dart';
+import '/main.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/lat_lng.dart';
+import '/flutter_flow/place.dart';
+import '/flutter_flow/flutter_flow_util.dart';
 import 'serialization_util.dart';
 
 export 'package:go_router/go_router.dart';
@@ -20,6 +25,11 @@ export 'serialization_util.dart';
 const kTransitionInfoKey = '__transition_info__';
 
 class AppStateNotifier extends ChangeNotifier {
+  AppStateNotifier._();
+
+  static AppStateNotifier? _instance;
+  static AppStateNotifier get instance => _instance ??= AppStateNotifier._();
+
   BaseAuthUser? initialUser;
   BaseAuthUser? user;
   bool showSplashImage = true;
@@ -47,10 +57,13 @@ class AppStateNotifier extends ChangeNotifier {
   void updateNotifyOnAuthChange(bool notify) => notifyOnAuthChange = notify;
 
   void update(BaseAuthUser newUser) {
+    final shouldUpdate =
+        user?.uid == null || newUser.uid == null || user?.uid != newUser.uid;
     initialUser ??= newUser;
     user = newUser;
     // Refresh the app on auth change unless explicitly marked otherwise.
-    if (notifyOnAuthChange) {
+    // No need to update unless the user has changed.
+    if (notifyOnAuthChange && shouldUpdate) {
       notifyListeners();
     }
     // Once again mark the notifier as needing to update on auth change
@@ -68,7 +81,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       initialLocation: '/',
       debugLogDiagnostics: true,
       refreshListenable: appStateNotifier,
-      errorBuilder: (context, _) => appStateNotifier.loggedIn
+      errorBuilder: (context, state) => appStateNotifier.loggedIn
           ? WelcomePageWidget()
           : OnboardingPageWidget(),
       routes: [
@@ -80,100 +93,15 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               : OnboardingPageWidget(),
           routes: [
             FFRoute(
-              name: 'HomePagePatient',
-              path: 'homePagePatient',
-              requireAuth: true,
-              builder: (context, params) => HomePagePatientWidget(),
-            ),
-            FFRoute(
-              name: 'E-mailLogin',
-              path: 'eMailLogin',
-              builder: (context, params) => EMailLoginWidget(),
-            ),
-            FFRoute(
               name: 'OnboardingPage',
-              path: 'onboardingPage',
+              path: 'OnboardingPage',
               builder: (context, params) => OnboardingPageWidget(),
             ),
             FFRoute(
-              name: 'E-mailRegistration',
-              path: 'eMailRegistration',
-              builder: (context, params) => EMailRegistrationWidget(),
-            ),
-            FFRoute(
-              name: 'HomePageDoctor',
-              path: 'homePageDoctor',
+              name: 'adm_Dashboard_old',
+              path: 'admDashboardOld',
               requireAuth: true,
-              builder: (context, params) => HomePageDoctorWidget(),
-            ),
-            FFRoute(
-              name: 'HomePageNurse',
-              path: 'homePageNurse',
-              requireAuth: true,
-              builder: (context, params) => HomePageNurseWidget(),
-            ),
-            FFRoute(
-              name: 'HomePageCEO',
-              path: 'homePageCEO',
-              requireAuth: true,
-              builder: (context, params) => HomePageCEOWidget(),
-            ),
-            FFRoute(
-              name: 'WelcomePage',
-              path: 'welcomePage',
-              requireAuth: true,
-              builder: (context, params) => WelcomePageWidget(),
-            ),
-            FFRoute(
-              name: 'HomePageLoggedNoRole',
-              path: 'homePageLoggedNoRole',
-              requireAuth: true,
-              builder: (context, params) => HomePageLoggedNoRoleWidget(),
-            ),
-            FFRoute(
-              name: 'HomePageMedicalCEO',
-              path: 'homePageMedicalCEO',
-              requireAuth: true,
-              builder: (context, params) => HomePageMedicalCEOWidget(),
-            ),
-            FFRoute(
-              name: 'HomePageRelative',
-              path: 'homePageRelative',
-              requireAuth: true,
-              builder: (context, params) => HomePageRelativeWidget(),
-            ),
-            FFRoute(
-              name: 'HomePageOrderly',
-              path: 'homePageOrderly',
-              requireAuth: true,
-              builder: (context, params) => HomePageOrderlyWidget(
-                rolesParam: params.getParam<String>(
-                    'rolesParam', ParamType.String, true),
-                colorParam: params.getParam('colorParam', ParamType.String),
-              ),
-            ),
-            FFRoute(
-              name: 'HomePageAdmin',
-              path: 'homePageAdmin',
-              requireAuth: true,
-              builder: (context, params) => HomePageAdminWidget(),
-            ),
-            FFRoute(
-              name: 'E-mailResetPassword',
-              path: 'eMailResetPassword',
-              builder: (context, params) => EMailResetPasswordWidget(),
-            ),
-            FFRoute(
-              name: 'PhoneLogin',
-              path: 'phoneLogin',
-              builder: (context, params) => PhoneLoginWidget(),
-            ),
-            FFRoute(
-              name: 'VerifyMobile',
-              path: 'verifyMobile',
-              builder: (context, params) => VerifyMobileWidget(
-                mobileNumber: params.getParam('mobileNumber', ParamType.String),
-              ),
+              builder: (context, params) => AdmDashboardOldWidget(),
             ),
             FFRoute(
               name: 'HomePageLoggedPhoneNoRole',
@@ -182,39 +110,380 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               builder: (context, params) => HomePageLoggedPhoneNoRoleWidget(),
             ),
             FFRoute(
-              name: 'WelcomePageCopy',
-              path: 'welcomePageCopy',
-              requireAuth: true,
-              builder: (context, params) => WelcomePageCopyWidget(),
+              name: 'HomePageHR-1',
+              path: 'homePageHR1',
+              builder: (context, params) => HomePageHR1Widget(),
             ),
             FFRoute(
-              name: 'HomePageReceptionist',
-              path: 'homePageReceptionist',
+              name: 'HomePageHR-2',
+              path: 'homePageHR2',
+              builder: (context, params) => HomePageHR2Widget(),
+            ),
+            FFRoute(
+              name: 'pat_Dashboard_old',
+              path: 'patDashboardOld',
               requireAuth: true,
-              builder: (context, params) => HomePageReceptionistWidget(
-                color: params.getParam('color', ParamType.Color),
+              builder: (context, params) => PatDashboardOldWidget(),
+            ),
+            FFRoute(
+              name: 'pat_Activity',
+              path: 'patActivity',
+              builder: (context, params) => PatActivityWidget(),
+            ),
+            FFRoute(
+              name: 'pat_Calendar',
+              path: 'patCalendar',
+              builder: (context, params) => PatCalendarWidget(),
+            ),
+            FFRoute(
+              name: 'pat_Dashboard',
+              path: 'patDashboard',
+              requireAuth: true,
+              builder: (context, params) => PatDashboardWidget(),
+            ),
+            FFRoute(
+              name: 'SetUserName_Phone_old',
+              path: 'SetUserName_Phone',
+              requireAuth: true,
+              builder: (context, params) => SetUserNamePhoneOldWidget(),
+            ),
+            FFRoute(
+              name: 'WelcomePage_WithAPI_old',
+              path: 'WelcomePage_WithAPI',
+              requireAuth: true,
+              builder: (context, params) => WelcomePageWithAPIOldWidget(),
+            ),
+            FFRoute(
+              name: 'NoRolePage',
+              path: 'NoRolePage',
+              requireAuth: true,
+              builder: (context, params) => NoRolePageWidget(),
+            ),
+            FFRoute(
+              name: 'WelcomePage',
+              path: 'WelcomePage',
+              requireAuth: true,
+              builder: (context, params) => WelcomePageWidget(),
+            ),
+            FFRoute(
+              name: 'rel_Dashboard',
+              path: 'relDashboard',
+              requireAuth: true,
+              builder: (context, params) => RelDashboardWidget(),
+            ),
+            FFRoute(
+              name: 'doc_Departments',
+              path: 'docDepartments',
+              requireAuth: true,
+              builder: (context, params) => DocDepartmentsWidget(),
+            ),
+            FFRoute(
+              name: 'Polocies',
+              path: 'Policies',
+              requireAuth: true,
+              builder: (context, params) => PolociesWidget(),
+            ),
+            FFRoute(
+              name: 'nur_Departments',
+              path: 'nurDepartments',
+              requireAuth: true,
+              builder: (context, params) => NurDepartmentsWidget(),
+            ),
+            FFRoute(
+              name: 'ceo_Dashboard',
+              path: 'ceoDashboard',
+              requireAuth: true,
+              builder: (context, params) => CeoDashboardWidget(),
+            ),
+            FFRoute(
+              name: 'm_ceo_Dashboard',
+              path: 'mCeoDashboard',
+              requireAuth: true,
+              builder: (context, params) => MCeoDashboardWidget(),
+            ),
+            FFRoute(
+              name: 'san_Dashboard',
+              path: 'sanDashboard',
+              requireAuth: true,
+              builder: (context, params) => SanDashboardWidget(),
+            ),
+            FFRoute(
+              name: 'adm_UsersAndRoles',
+              path: 'admUsersAndRoles',
+              requireAuth: true,
+              builder: (context, params) => AdmUsersAndRolesWidget(),
+            ),
+            FFRoute(
+              name: 'rec_Dashboard',
+              path: 'recDashboard',
+              requireAuth: true,
+              builder: (context, params) => RecDashboardWidget(),
+            ),
+            FFRoute(
+              name: 's_nur_Dashboard',
+              path: 'sNurDashboard',
+              requireAuth: true,
+              builder: (context, params) => SNurDashboardWidget(),
+            ),
+            FFRoute(
+              name: 'head_Dashboard',
+              path: 'headDashboard',
+              requireAuth: true,
+              builder: (context, params) => HeadDashboardWidget(),
+            ),
+            FFRoute(
+              name: 'rec_NewAdmission',
+              path: 'recNewAdmission',
+              builder: (context, params) => RecNewAdmissionWidget(
+                patientID: params.getParam(
+                  'patientID',
+                  ParamType.String,
+                ),
               ),
             ),
             FFRoute(
-              name: 'HomePageRegistered',
-              path: 'homePageRegistered',
+              name: 'pat_Call',
+              path: 'patCall',
               requireAuth: true,
-              builder: (context, params) => HomePageRegisteredWidget(),
+              builder: (context, params) => PatCallWidget(),
             ),
             FFRoute(
-              name: 'PhoneLoginSuperbase',
-              path: 'phoneLoginSuperbase',
-              builder: (context, params) => PhoneLoginSuperbaseWidget(),
+              name: 'pat_Examination',
+              path: 'patExamination',
+              requireAuth: true,
+              builder: (context, params) => PatExaminationWidget(),
             ),
             FFRoute(
-              name: 'HomePageHR',
-              path: 'homePageHR',
-              builder: (context, params) => HomePageHRWidget(),
+              name: 'pat_Prescriptions',
+              path: 'patPrescriptions',
+              requireAuth: true,
+              builder: (context, params) => PatPrescriptionsWidget(),
+            ),
+            FFRoute(
+              name: 'pat_Procedures',
+              path: 'patProcedures',
+              requireAuth: true,
+              builder: (context, params) => PatProceduresWidget(),
+            ),
+            FFRoute(
+              name: 'pat_Diary',
+              path: 'patDiary',
+              requireAuth: true,
+              builder: (context, params) => PatDiaryWidget(),
+            ),
+            FFRoute(
+              name: 'rec_PatientInfo-EditData',
+              path: 'recPatientInfoEditData',
+              builder: (context, params) => RecPatientInfoEditDataWidget(
+                patientID: params.getParam(
+                  'patientID',
+                  ParamType.String,
+                ),
+              ),
+            ),
+            FFRoute(
+              name: 'pat_PatientInfo',
+              path: 'patPatientInfo',
+              builder: (context, params) => PatPatientInfoWidget(
+                patientID: params.getParam(
+                  'patientID',
+                  ParamType.String,
+                ),
+              ),
+            ),
+            FFRoute(
+              name: 'adm_Departments',
+              path: 'admDepartments',
+              requireAuth: true,
+              builder: (context, params) => AdmDepartmentsWidget(),
+            ),
+            FFRoute(
+              name: 'adm_Notifications',
+              path: 'admNotifications',
+              requireAuth: true,
+              builder: (context, params) => AdmNotificationsWidget(),
+            ),
+            FFRoute(
+              name: 'adm_Patients',
+              path: 'admPatients',
+              requireAuth: true,
+              builder: (context, params) => AdmPatientsWidget(),
+            ),
+            FFRoute(
+              name: 'adm_MedicalTeams',
+              path: 'admMedicalTeams',
+              requireAuth: true,
+              builder: (context, params) => AdmMedicalTeamsWidget(),
+            ),
+            FFRoute(
+              name: 'adm_Interventions',
+              path: 'admInterventions',
+              requireAuth: true,
+              builder: (context, params) => AdmInterventionsWidget(),
+            ),
+            FFRoute(
+              name: 'adm_Classifiers',
+              path: 'admClassifiers',
+              requireAuth: true,
+              builder: (context, params) => AdmClassifiersWidget(),
+            ),
+            FFRoute(
+              name: 'adm_FormsAndStatements',
+              path: 'admFormsAndStatements',
+              requireAuth: true,
+              builder: (context, params) => AdmFormsAndStatementsWidget(),
+            ),
+            FFRoute(
+              name: 'doc_Patients',
+              path: 'docPatients',
+              requireAuth: true,
+              builder: (context, params) => DocPatientsWidget(),
+            ),
+            FFRoute(
+              name: 'doc_AI',
+              path: 'docAI',
+              requireAuth: true,
+              builder: (context, params) => DocAIWidget(),
+            ),
+            FFRoute(
+              name: 'doc_ResearchSchedule',
+              path: 'docResearchSchedule',
+              requireAuth: true,
+              builder: (context, params) => DocResearchScheduleWidget(),
+            ),
+            FFRoute(
+              name: 'doc_SurgeriesSchedule',
+              path: 'docSurgeriesSchedule',
+              requireAuth: true,
+              builder: (context, params) => DocSurgeriesScheduleWidget(),
+            ),
+            FFRoute(
+              name: 'doc_DutiesSchedule',
+              path: 'docDutiesSchedule',
+              requireAuth: true,
+              builder: (context, params) => DocDutiesScheduleWidget(),
+            ),
+            FFRoute(
+              name: 'nur_Patients',
+              path: 'nurPatients',
+              requireAuth: true,
+              builder: (context, params) => NurPatientsWidget(),
+            ),
+            FFRoute(
+              name: 'nur_Calls',
+              path: 'nurCalls',
+              requireAuth: true,
+              builder: (context, params) => NurCallsWidget(),
+            ),
+            FFRoute(
+              name: 'nur_Procedures',
+              path: 'nurProcedures',
+              requireAuth: true,
+              builder: (context, params) => NurProceduresWidget(),
+            ),
+            FFRoute(
+              name: 'nur_ResearchSchedule',
+              path: 'nurResearchSchedule',
+              requireAuth: true,
+              builder: (context, params) => NurResearchScheduleWidget(),
+            ),
+            FFRoute(
+              name: 'nur_SurgeriesSchedule',
+              path: 'nurSurgeriesSchedule',
+              requireAuth: true,
+              builder: (context, params) => NurSurgeriesScheduleWidget(),
+            ),
+            FFRoute(
+              name: 'nur_DutiesSchedule',
+              path: 'nurDutiesSchedule',
+              requireAuth: true,
+              builder: (context, params) => NurDutiesScheduleWidget(),
+            ),
+            FFRoute(
+              name: 'rec_Admission-EditData',
+              path: 'recAdmissionEditData',
+              builder: (context, params) => RecAdmissionEditDataWidget(
+                admissionID: params.getParam(
+                  'admissionID',
+                  ParamType.String,
+                ),
+              ),
+            ),
+            FFRoute(
+              name: 'pat_Chat',
+              path: 'patChat',
+              requireAuth: true,
+              builder: (context, params) => PatChatWidget(),
+            ),
+            FFRoute(
+              name: 'patient_DoctorSide_Chat',
+              path: 'patientDoctorSideChat',
+              builder: (context, params) => PatientDoctorSideChatWidget(
+                opponentID: params.getParam(
+                  'opponentID',
+                  ParamType.String,
+                ),
+                userID: params.getParam(
+                  'userID',
+                  ParamType.String,
+                ),
+                opponentPhoto: params.getParam(
+                  'opponentPhoto',
+                  ParamType.String,
+                ),
+                opponentFirstName: params.getParam(
+                  'opponentFirstName',
+                  ParamType.String,
+                ),
+                opponentLastName: params.getParam(
+                  'opponentLastName',
+                  ParamType.String,
+                ),
+                opponentMiddleName: params.getParam(
+                  'opponentMiddleName',
+                  ParamType.String,
+                ),
+              ),
+            ),
+            FFRoute(
+              name: 'pat_DashboardCopy',
+              path: 'patDashboardCopy',
+              requireAuth: true,
+              builder: (context, params) => PatDashboardCopyWidget(),
+            ),
+            FFRoute(
+              name: 'patient_PatientSide_Chat',
+              path: 'patientPatientSideChat',
+              builder: (context, params) => PatientPatientSideChatWidget(
+                opponentID: params.getParam(
+                  'opponentID',
+                  ParamType.String,
+                ),
+                userID: params.getParam(
+                  'userID',
+                  ParamType.String,
+                ),
+                opponentPhoto: params.getParam(
+                  'opponentPhoto',
+                  ParamType.String,
+                ),
+                opponentFirstName: params.getParam(
+                  'opponentFirstName',
+                  ParamType.String,
+                ),
+                opponentLastName: params.getParam(
+                  'opponentLastName',
+                  ParamType.String,
+                ),
+                opponentMiddleName: params.getParam(
+                  'opponentMiddleName',
+                  ParamType.String,
+                ),
+              ),
             )
           ].map((r) => r.toRoute(appStateNotifier)).toList(),
         ),
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
-      urlPathStrategy: UrlPathStrategy.path,
     );
 
 extension NavParamExtensions on Map<String, String?> {
@@ -229,8 +498,8 @@ extension NavigationExtensions on BuildContext {
   void goNamedAuth(
     String name,
     bool mounted, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, String> queryParameters = const <String, String>{},
     Object? extra,
     bool ignoreRedirect = false,
   }) =>
@@ -238,16 +507,16 @@ extension NavigationExtensions on BuildContext {
           ? null
           : goNamed(
               name,
-              params: params,
-              queryParams: queryParams,
+              pathParameters: pathParameters,
+              queryParameters: queryParameters,
               extra: extra,
             );
 
   void pushNamedAuth(
     String name,
     bool mounted, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, String> queryParameters = const <String, String>{},
     Object? extra,
     bool ignoreRedirect = false,
   }) =>
@@ -255,25 +524,24 @@ extension NavigationExtensions on BuildContext {
           ? null
           : pushNamed(
               name,
-              params: params,
-              queryParams: queryParams,
+              pathParameters: pathParameters,
+              queryParameters: queryParameters,
               extra: extra,
             );
 
   void safePop() {
     // If there is only one route on the stack, navigate to the initial
     // page instead of popping.
-    if (GoRouter.of(this).routerDelegate.matches.length <= 1) {
-      go('/');
-    } else {
+    if (canPop()) {
       pop();
+    } else {
+      go('/');
     }
   }
 }
 
 extension GoRouterExtensions on GoRouter {
-  AppStateNotifier get appState =>
-      (routerDelegate.refreshListenable as AppStateNotifier);
+  AppStateNotifier get appState => AppStateNotifier.instance;
   void prepareAuthEvent([bool ignoreRedirect = false]) =>
       appState.hasRedirect() && !ignoreRedirect
           ? null
@@ -282,16 +550,15 @@ extension GoRouterExtensions on GoRouter {
       !ignoreRedirect && appState.hasRedirect();
   void clearRedirectLocation() => appState.clearRedirectLocation();
   void setRedirectLocationIfUnset(String location) =>
-      (routerDelegate.refreshListenable as AppStateNotifier)
-          .updateNotifyOnAuthChange(false);
+      appState.updateNotifyOnAuthChange(false);
 }
 
 extension _GoRouterStateExtensions on GoRouterState {
   Map<String, dynamic> get extraMap =>
       extra != null ? extra as Map<String, dynamic> : {};
   Map<String, dynamic> get allParams => <String, dynamic>{}
-    ..addAll(params)
-    ..addAll(queryParams)
+    ..addAll(pathParameters)
+    ..addAll(uri.queryParameters)
     ..addAll(extraMap);
   TransitionInfo get transitionInfo => extraMap.containsKey(kTransitionInfoKey)
       ? extraMap[kTransitionInfoKey] as TransitionInfo
@@ -310,7 +577,7 @@ class FFParameters {
   // present is the special extra parameter reserved for the transition info.
   bool get isEmpty =>
       state.allParams.isEmpty ||
-      (state.extraMap.length == 1 &&
+      (state.allParams.length == 1 &&
           state.extraMap.containsKey(kTransitionInfoKey));
   bool isAsyncParam(MapEntry<String, dynamic> param) =>
       asyncParams.containsKey(param.key) && param.value is String;
@@ -331,10 +598,10 @@ class FFParameters {
 
   dynamic getParam<T>(
     String paramName,
-    ParamType type, [
+    ParamType type, {
     bool isList = false,
-    List<String>? collectionNamePath,
-  ]) {
+    StructBuilder<T>? structBuilder,
+  }) {
     if (futureParamValues.containsKey(paramName)) {
       return futureParamValues[paramName];
     }
@@ -347,7 +614,12 @@ class FFParameters {
       return param;
     }
     // Return serialized value.
-    return deserializeParam<T>(param, type, isList, collectionNamePath);
+    return deserializeParam<T>(
+      param,
+      type,
+      isList,
+      structBuilder: structBuilder,
+    );
   }
 }
 
@@ -371,7 +643,7 @@ class FFRoute {
   GoRoute toRoute(AppStateNotifier appStateNotifier) => GoRoute(
         name: name,
         path: path,
-        redirect: (state) {
+        redirect: (context, state) {
           if (appStateNotifier.shouldRedirect) {
             final redirectLocation = appStateNotifier.getRedirectLocation();
             appStateNotifier.clearRedirectLocation();
@@ -379,12 +651,13 @@ class FFRoute {
           }
 
           if (requireAuth && !appStateNotifier.loggedIn) {
-            appStateNotifier.setRedirectLocationIfUnset(state.location);
-            return '/onboardingPage';
+            appStateNotifier.setRedirectLocationIfUnset(state.uri.toString());
+            return '/OnboardingPage';
           }
           return null;
         },
         pageBuilder: (context, state) {
+          fixStatusBarOniOS16AndBelow(context);
           final ffParams = FFParameters(state, asyncParams);
           final page = ffParams.hasFutures
               ? FutureBuilder(
@@ -398,7 +671,9 @@ class FFRoute {
                     width: 50.0,
                     height: 50.0,
                     child: CircularProgressIndicator(
-                      color: FlutterFlowTheme.of(context).primary,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        FlutterFlowTheme.of(context).primary,
+                      ),
                     ),
                   ),
                 )
@@ -410,13 +685,20 @@ class FFRoute {
                   key: state.pageKey,
                   child: child,
                   transitionDuration: transitionInfo.duration,
-                  transitionsBuilder: PageTransition(
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) =>
+                          PageTransition(
                     type: transitionInfo.transitionType,
                     duration: transitionInfo.duration,
                     reverseDuration: transitionInfo.duration,
                     alignment: transitionInfo.alignment,
                     child: child,
-                  ).transitionsBuilder,
+                  ).buildTransitions(
+                    context,
+                    animation,
+                    secondaryAnimation,
+                    child,
+                  ),
                 )
               : MaterialPage(key: state.pageKey, child: child);
         },
@@ -438,4 +720,34 @@ class TransitionInfo {
   final Alignment? alignment;
 
   static TransitionInfo appDefault() => TransitionInfo(hasTransition: false);
+}
+
+class RootPageContext {
+  const RootPageContext(this.isRootPage, [this.errorRoute]);
+  final bool isRootPage;
+  final String? errorRoute;
+
+  static bool isInactiveRootPage(BuildContext context) {
+    final rootPageContext = context.read<RootPageContext?>();
+    final isRootPage = rootPageContext?.isRootPage ?? false;
+    final location = GoRouterState.of(context).uri.toString();
+    return isRootPage &&
+        location != '/' &&
+        location != rootPageContext?.errorRoute;
+  }
+
+  static Widget wrap(Widget child, {String? errorRoute}) => Provider.value(
+        value: RootPageContext(true, errorRoute),
+        child: child,
+      );
+}
+
+extension GoRouterLocationExtension on GoRouter {
+  String getCurrentLocation() {
+    final RouteMatch lastMatch = routerDelegate.currentConfiguration.last;
+    final RouteMatchList matchList = lastMatch is ImperativeRouteMatch
+        ? lastMatch.matches
+        : routerDelegate.currentConfiguration;
+    return matchList.uri.toString();
+  }
 }

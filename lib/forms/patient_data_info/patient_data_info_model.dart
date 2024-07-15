@@ -1,0 +1,233 @@
+import '/backend/supabase/supabase.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
+import '/flutter_flow/custom_functions.dart' as functions;
+import 'patient_data_info_widget.dart' show PatientDataInfoWidget;
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:provider/provider.dart';
+
+class PatientDataInfoModel extends FlutterFlowModel<PatientDataInfoWidget> {
+  ///  Local state fields for this component.
+
+  bool isIdentified = true;
+
+  bool isInvalid = false;
+
+  bool isHospAgain = false;
+
+  bool isAlergyReactions = false;
+
+  bool isHIV = false;
+
+  bool isVasermanReactionResult = false;
+
+  DateTime? hivDate;
+
+  DateTime? vassermanDate;
+
+  ///  State fields for stateful widgets in this component.
+
+  // Stores action output result for [Backend Call - Query Rows] action in patientDataInfo widget.
+  List<PatientsRow>? userDataRowsByAction;
+  // State field(s) for LastName widget.
+  FocusNode? lastNameFocusNode;
+  TextEditingController? lastNameTextController;
+  String? Function(BuildContext, String?)? lastNameTextControllerValidator;
+  // State field(s) for FirstName widget.
+  FocusNode? firstNameFocusNode;
+  TextEditingController? firstNameTextController;
+  String? Function(BuildContext, String?)? firstNameTextControllerValidator;
+  // State field(s) for MiddleName widget.
+  FocusNode? middleNameFocusNode;
+  TextEditingController? middleNameTextController;
+  String? Function(BuildContext, String?)? middleNameTextControllerValidator;
+  // State field(s) for gender widget.
+  FocusNode? genderFocusNode;
+  TextEditingController? genderTextController;
+  String? Function(BuildContext, String?)? genderTextControllerValidator;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered = false;
+  // State field(s) for dateOfBirh widget.
+  FocusNode? dateOfBirhFocusNode;
+  TextEditingController? dateOfBirhTextController;
+  final dateOfBirhMask = MaskTextInputFormatter(mask: '+38 (###) ###-##-##');
+  String? Function(BuildContext, String?)? dateOfBirhTextControllerValidator;
+  // State field(s) for youPhone widget.
+  FocusNode? youPhoneFocusNode;
+  TextEditingController? youPhoneTextController;
+  final youPhoneMask = MaskTextInputFormatter(mask: '+38 (###) ###-##-##');
+  String? Function(BuildContext, String?)? youPhoneTextControllerValidator;
+  // State field(s) for credentialDocumentType widget.
+  FocusNode? credentialDocumentTypeFocusNode;
+  TextEditingController? credentialDocumentTypeTextController;
+  String? Function(BuildContext, String?)?
+      credentialDocumentTypeTextControllerValidator;
+  // State field(s) for credentialDocument widget.
+  FocusNode? credentialDocumentFocusNode;
+  TextEditingController? credentialDocumentTextController;
+  String? Function(BuildContext, String?)?
+      credentialDocumentTextControllerValidator;
+  // State field(s) for City widget.
+  FocusNode? cityFocusNode;
+  TextEditingController? cityTextController;
+  String? Function(BuildContext, String?)? cityTextControllerValidator;
+  // State field(s) for cityorVil widget.
+  FocusNode? cityorVilFocusNode;
+  TextEditingController? cityorVilTextController;
+  String? Function(BuildContext, String?)? cityorVilTextControllerValidator;
+  // State field(s) for index widget.
+  FocusNode? indexFocusNode;
+  TextEditingController? indexTextController;
+  final indexMask = MaskTextInputFormatter(mask: '#####');
+  String? Function(BuildContext, String?)? indexTextControllerValidator;
+  // State field(s) for oblast widget.
+  FocusNode? oblastFocusNode;
+  TextEditingController? oblastTextController;
+  String? Function(BuildContext, String?)? oblastTextControllerValidator;
+  // State field(s) for region widget.
+  FocusNode? regionFocusNode;
+  TextEditingController? regionTextController;
+  String? Function(BuildContext, String?)? regionTextControllerValidator;
+  // State field(s) for street widget.
+  FocusNode? streetFocusNode;
+  TextEditingController? streetTextController;
+  String? Function(BuildContext, String?)? streetTextControllerValidator;
+  // State field(s) for buildNum widget.
+  FocusNode? buildNumFocusNode;
+  TextEditingController? buildNumTextController;
+  String? Function(BuildContext, String?)? buildNumTextControllerValidator;
+  // State field(s) for flat widget.
+  FocusNode? flatFocusNode;
+  TextEditingController? flatTextController;
+  String? Function(BuildContext, String?)? flatTextControllerValidator;
+  // State field(s) for workPlace widget.
+  FocusNode? workPlaceFocusNode;
+  TextEditingController? workPlaceTextController;
+  String? Function(BuildContext, String?)? workPlaceTextControllerValidator;
+  // State field(s) for workPosition widget.
+  FocusNode? workPositionFocusNode;
+  TextEditingController? workPositionTextController;
+  String? Function(BuildContext, String?)? workPositionTextControllerValidator;
+  // State field(s) for BloodGroup widget.
+  FocusNode? bloodGroupFocusNode;
+  TextEditingController? bloodGroupTextController;
+  String? Function(BuildContext, String?)? bloodGroupTextControllerValidator;
+  // State field(s) for BloodRh widget.
+  FocusNode? bloodRhFocusNode;
+  TextEditingController? bloodRhTextController;
+  String? Function(BuildContext, String?)? bloodRhTextControllerValidator;
+  // State field(s) for height widget.
+  FocusNode? heightFocusNode;
+  TextEditingController? heightTextController;
+  String? Function(BuildContext, String?)? heightTextControllerValidator;
+  // State field(s) for allergyReactions widget.
+  FocusNode? allergyReactionsFocusNode;
+  TextEditingController? allergyReactionsTextController;
+  String? Function(BuildContext, String?)?
+      allergyReactionsTextControllerValidator;
+  // State field(s) for HIVdate widget.
+  FocusNode? hIVdateFocusNode;
+  TextEditingController? hIVdateTextController;
+  String? Function(BuildContext, String?)? hIVdateTextControllerValidator;
+  // State field(s) for VASdate widget.
+  FocusNode? vASdateFocusNode;
+  TextEditingController? vASdateTextController;
+  String? Function(BuildContext, String?)? vASdateTextControllerValidator;
+  // State field(s) for InvalidGroup widget.
+  FocusNode? invalidGroupFocusNode;
+  TextEditingController? invalidGroupTextController;
+  String? Function(BuildContext, String?)? invalidGroupTextControllerValidator;
+  // State field(s) for invalidType widget.
+  FocusNode? invalidTypeFocusNode;
+  TextEditingController? invalidTypeTextController;
+  String? Function(BuildContext, String?)? invalidTypeTextControllerValidator;
+
+  @override
+  void initState(BuildContext context) {}
+
+  @override
+  void dispose() {
+    lastNameFocusNode?.dispose();
+    lastNameTextController?.dispose();
+
+    firstNameFocusNode?.dispose();
+    firstNameTextController?.dispose();
+
+    middleNameFocusNode?.dispose();
+    middleNameTextController?.dispose();
+
+    genderFocusNode?.dispose();
+    genderTextController?.dispose();
+
+    dateOfBirhFocusNode?.dispose();
+    dateOfBirhTextController?.dispose();
+
+    youPhoneFocusNode?.dispose();
+    youPhoneTextController?.dispose();
+
+    credentialDocumentTypeFocusNode?.dispose();
+    credentialDocumentTypeTextController?.dispose();
+
+    credentialDocumentFocusNode?.dispose();
+    credentialDocumentTextController?.dispose();
+
+    cityFocusNode?.dispose();
+    cityTextController?.dispose();
+
+    cityorVilFocusNode?.dispose();
+    cityorVilTextController?.dispose();
+
+    indexFocusNode?.dispose();
+    indexTextController?.dispose();
+
+    oblastFocusNode?.dispose();
+    oblastTextController?.dispose();
+
+    regionFocusNode?.dispose();
+    regionTextController?.dispose();
+
+    streetFocusNode?.dispose();
+    streetTextController?.dispose();
+
+    buildNumFocusNode?.dispose();
+    buildNumTextController?.dispose();
+
+    flatFocusNode?.dispose();
+    flatTextController?.dispose();
+
+    workPlaceFocusNode?.dispose();
+    workPlaceTextController?.dispose();
+
+    workPositionFocusNode?.dispose();
+    workPositionTextController?.dispose();
+
+    bloodGroupFocusNode?.dispose();
+    bloodGroupTextController?.dispose();
+
+    bloodRhFocusNode?.dispose();
+    bloodRhTextController?.dispose();
+
+    heightFocusNode?.dispose();
+    heightTextController?.dispose();
+
+    allergyReactionsFocusNode?.dispose();
+    allergyReactionsTextController?.dispose();
+
+    hIVdateFocusNode?.dispose();
+    hIVdateTextController?.dispose();
+
+    vASdateFocusNode?.dispose();
+    vASdateTextController?.dispose();
+
+    invalidGroupFocusNode?.dispose();
+    invalidGroupTextController?.dispose();
+
+    invalidTypeFocusNode?.dispose();
+    invalidTypeTextController?.dispose();
+  }
+}

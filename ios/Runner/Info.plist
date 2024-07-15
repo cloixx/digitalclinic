@@ -29,7 +29,6 @@
             <key>CFBundleURLSchemes</key>
             <array>
                 <string>com.googleusercontent.apps.153522495917-lj2j1l9ek5caer7dnmqqs4j125kgeljp</string>
-                
             </array>
         </dict>
 
@@ -37,7 +36,7 @@
         <key>CFBundleTypeRole</key>
         <string>Editor</string>
         <key>CFBundleURLName</key>
-        <string>digitalclinic.ua</string>
+        <string>digitalclinic.com.ua</string>
         <key>CFBundleURLSchemes</key>
         <array>
         <string>digitalclinic</string>

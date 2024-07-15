@@ -1,0 +1,464 @@
+import '/backend/schema/structs/index.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
+import '/pages/choice_of_chamber/choice_of_chamber_widget.dart';
+import '/flutter_flow/custom_functions.dart' as functions;
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'new_patient_item_nur_model.dart';
+export 'new_patient_item_nur_model.dart';
+
+class NewPatientItemNurWidget extends StatefulWidget {
+  const NewPatientItemNurWidget({
+    super.key,
+    required this.userRow,
+  });
+
+  final PatientInDepartmentViewStruct? userRow;
+
+  @override
+  State<NewPatientItemNurWidget> createState() =>
+      _NewPatientItemNurWidgetState();
+}
+
+class _NewPatientItemNurWidgetState extends State<NewPatientItemNurWidget> {
+  late NewPatientItemNurModel _model;
+
+  @override
+  void setState(VoidCallback callback) {
+    super.setState(callback);
+    _model.onUpdate();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => NewPatientItemNurModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _model.maybeDispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: AlignmentDirectional(-1.0, 0.0),
+      child: MouseRegion(
+        opaque: false,
+        cursor: SystemMouseCursors.click ?? MouseCursor.defer,
+        child: Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 1.0),
+          child: Container(
+            height: 100.0,
+            decoration: BoxDecoration(
+              color: _model.mouseRegionHovered!
+                  ? Color(0x31ED0423)
+                  : Color(0x21ED0423),
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 0.0,
+                  color: Color(0xFFF1F4F8),
+                  offset: Offset(
+                    0.0,
+                    1.0,
+                  ),
+                )
+              ],
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(18.0, 0.0, 18.0, 0.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    flex: 6,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        AnimatedContainer(
+                          duration: Duration(milliseconds: 100),
+                          curve: Curves.easeOut,
+                          width: 60.0,
+                          decoration: BoxDecoration(
+                            color: FlutterFlowTheme.of(context)
+                                .secondaryBackground,
+                            borderRadius: BorderRadius.circular(8.0),
+                            shape: BoxShape.rectangle,
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Image.network(
+                              valueOrDefault<String>(
+                                widget!.userRow?.patientPhotoUrl,
+                                'https://oglmkpwpiottypmzxnzu.supabase.co/storage/v1/object/sign/avatars/noPhoto.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhdmF0YXJzL25vUGhvdG8ucG5nIiwiaWF0IjoxNzEyNTczNzE3LCJleHAiOjIzNDMyOTM3MTd9.l64qIP6u3XEMFbOYNNtOv4s-Yhqu75BgdA1N4l8ZYdE&t=2024-04-08T10%3A55%3A17.333Z',
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                valueOrDefault<double>(
+                                  () {
+                                    if (MediaQuery.sizeOf(context).width <
+                                        kBreakpointSmall) {
+                                      return 12.0;
+                                    } else if (MediaQuery.sizeOf(context)
+                                            .width <
+                                        kBreakpointMedium) {
+                                      return 12.0;
+                                    } else if (MediaQuery.sizeOf(context)
+                                            .width <
+                                        kBreakpointLarge) {
+                                      return 20.0;
+                                    } else {
+                                      return 20.0;
+                                    }
+                                  }(),
+                                  0.0,
+                                ),
+                                0.0,
+                                0.0,
+                                0.0),
+                            child: Text(
+                              '${valueOrDefault<String>(
+                                widget!.userRow?.patientLastName,
+                                '_',
+                              )} ${valueOrDefault<String>(
+                                widget!.userRow?.patientFirstName,
+                                '_',
+                              )} ${valueOrDefault<String>(
+                                widget!.userRow?.patientMiddleName,
+                                '_',
+                              )}',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .override(
+                                    fontFamily: 'Roboto',
+                                    letterSpacing: 0.0,
+                                  ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (responsiveVisibility(
+                    context: context,
+                    phone: false,
+                    tablet: false,
+                  ))
+                    Expanded(
+                      flex: 3,
+                      child: Padding(
+                        padding:
+                            EdgeInsetsDirectional.fromSTEB(18.0, 0.0, 0.0, 0.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                if (widget!.userRow?.patientDateOfBirth !=
+                                        null &&
+                                    widget!.userRow?.patientDateOfBirth != '')
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 0.0, 8.0, 0.0),
+                                    child: Text(
+                                      valueOrDefault<String>(
+                                        functions
+                                            .ageCalculation(functions
+                                                .stringToDateTime(widget!
+                                                    .userRow
+                                                    ?.patientDateOfBirth))
+                                            .toString(),
+                                        '0',
+                                      ),
+                                      style: FlutterFlowTheme.of(context)
+                                          .titleSmall
+                                          .override(
+                                            fontFamily: 'Rubik',
+                                            letterSpacing: 0.0,
+                                          ),
+                                    ),
+                                  ),
+                                if (widget!.userRow?.patientDateOfBirth !=
+                                        null &&
+                                    widget!.userRow?.patientDateOfBirth != '')
+                                  Text(
+                                    'р.',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily: 'Roboto',
+                                          letterSpacing: 0.0,
+                                        ),
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  Expanded(
+                    flex: 4,
+                    child: Padding(
+                      padding:
+                          EdgeInsetsDirectional.fromSTEB(18.0, 0.0, 0.0, 0.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Flexible(
+                            child: Builder(
+                              builder: (context) => FFButtonWidget(
+                                onPressed: () async {
+                                  if (MediaQuery.sizeOf(context).width <
+                                      kBreakpointLarge) {
+                                    await showDialog(
+                                      context: context,
+                                      builder: (dialogContext) {
+                                        return Dialog(
+                                          elevation: 0,
+                                          insetPadding: EdgeInsets.zero,
+                                          backgroundColor: Colors.transparent,
+                                          alignment: AlignmentDirectional(
+                                                  0.0, 0.0)
+                                              .resolve(
+                                                  Directionality.of(context)),
+                                          child: Container(
+                                            width: MediaQuery.sizeOf(context)
+                                                    .width *
+                                                0.9,
+                                            child: ChoiceOfChamberWidget(
+                                              department: widget!
+                                                  .userRow!.departmentCurrent,
+                                              chamberNumber: widget!
+                                                  .userRow!.chamberNumber,
+                                              admissionID:
+                                                  widget!.userRow!.hadmID,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ).then((value) => setState(() {}));
+                                  } else {
+                                    await showDialog(
+                                      context: context,
+                                      builder: (dialogContext) {
+                                        return Dialog(
+                                          elevation: 0,
+                                          insetPadding: EdgeInsets.zero,
+                                          backgroundColor: Colors.transparent,
+                                          alignment: AlignmentDirectional(
+                                                  0.0, 0.0)
+                                              .resolve(
+                                                  Directionality.of(context)),
+                                          child: Container(
+                                            width: MediaQuery.sizeOf(context)
+                                                    .width *
+                                                0.6,
+                                            child: ChoiceOfChamberWidget(
+                                              department: widget!
+                                                  .userRow!.departmentCurrent,
+                                              chamberNumber: widget!
+                                                  .userRow!.chamberNumber,
+                                              admissionID:
+                                                  widget!.userRow!.hadmID,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ).then((value) => setState(() {}));
+                                  }
+                                },
+                                text: 'Призначити палату',
+                                options: FFButtonOptions(
+                                  height: 40.0,
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      24.0, 0.0, 24.0, 0.0),
+                                  iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                      0.0, 0.0, 0.0, 0.0),
+                                  color: FlutterFlowTheme.of(context).primary,
+                                  textStyle: FlutterFlowTheme.of(context)
+                                      .bodySmall
+                                      .override(
+                                        fontFamily: 'Rubik',
+                                        color: FlutterFlowTheme.of(context)
+                                            .otherBackground,
+                                        fontSize: 16.0,
+                                        letterSpacing: 0.0,
+                                      ),
+                                  borderSide: BorderSide(
+                                    color: Colors.transparent,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (responsiveVisibility(
+                    context: context,
+                    phone: false,
+                    tablet: false,
+                  ))
+                    Expanded(
+                      flex: () {
+                        if (MediaQuery.sizeOf(context).width <
+                            kBreakpointSmall) {
+                          return 0;
+                        } else if (MediaQuery.sizeOf(context).width <
+                            kBreakpointMedium) {
+                          return 0;
+                        } else if (MediaQuery.sizeOf(context).width <
+                            kBreakpointLarge) {
+                          return 3;
+                        } else {
+                          return 3;
+                        }
+                      }(),
+                      child: Padding(
+                        padding:
+                            EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 0.0, 0.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            InkWell(
+                              splashColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                await launchUrl(Uri(
+                                  scheme: 'tel',
+                                  path: widget!.userRow!.patientPhoneNumber,
+                                ));
+                              },
+                              child: Container(
+                                width: 50.0,
+                                height: 50.0,
+                                decoration: BoxDecoration(
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryBackground,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      blurRadius: 5.0,
+                                      color:
+                                          FlutterFlowTheme.of(context).accent4,
+                                      offset: Offset(
+                                        0.0,
+                                        0.5,
+                                      ),
+                                    )
+                                  ],
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  border: Border.all(
+                                    color: FlutterFlowTheme.of(context).accent4,
+                                    width: 0.5,
+                                  ),
+                                ),
+                                alignment: AlignmentDirectional(0.0, 0.0),
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      10.0, 10.0, 10.0, 10.0),
+                                  child: Icon(
+                                    Icons.phone_iphone_outlined,
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    size: 26.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  valueOrDefault<double>(
+                                    () {
+                                      if (MediaQuery.sizeOf(context).width <
+                                          kBreakpointSmall) {
+                                        return 12.0;
+                                      } else if (MediaQuery.sizeOf(context)
+                                              .width <
+                                          kBreakpointMedium) {
+                                        return 12.0;
+                                      } else if (MediaQuery.sizeOf(context)
+                                              .width <
+                                          kBreakpointLarge) {
+                                        return 20.0;
+                                      } else {
+                                        return 20.0;
+                                      }
+                                    }(),
+                                    0.0,
+                                  ),
+                                  0.0,
+                                  0.0,
+                                  0.0),
+                              child: Container(
+                                width: 50.0,
+                                height: 50.0,
+                                decoration: BoxDecoration(
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryBackground,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      blurRadius: 5.0,
+                                      color:
+                                          FlutterFlowTheme.of(context).accent4,
+                                      offset: Offset(
+                                        0.0,
+                                        0.5,
+                                      ),
+                                    )
+                                  ],
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  border: Border.all(
+                                    color: FlutterFlowTheme.of(context).accent4,
+                                    width: 0.5,
+                                  ),
+                                ),
+                                alignment: AlignmentDirectional(0.0, 0.0),
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      10.0, 10.0, 10.0, 10.0),
+                                  child: Icon(
+                                    Icons.chat_rounded,
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    size: 26.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        onEnter: ((event) async {
+          setState(() => _model.mouseRegionHovered = true);
+        }),
+        onExit: ((event) async {
+          setState(() => _model.mouseRegionHovered = false);
+        }),
+      ),
+    );
+  }
+}

@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:from_css_color/from_css_color.dart';
 
-import '/backend/backend.dart';
+import '/backend/schema/structs/index.dart';
+import '/backend/schema/enums/enums.dart';
 import '/backend/supabase/supabase.dart';
+
 import '../../flutter_flow/lat_lng.dart';
 import '../../flutter_flow/place.dart';
 import '../../flutter_flow/uploaded_file.dart';
@@ -30,71 +32,61 @@ String placeToString(FFPlace place) => jsonEncode({
 String uploadedFileToString(FFUploadedFile uploadedFile) =>
     uploadedFile.serialize();
 
-const _kDocIdDelimeter = '|';
-String _serializeDocumentReference(DocumentReference ref) {
-  final docIds = <String>[];
-  DocumentReference? currentRef = ref;
-  while (currentRef != null) {
-    docIds.add(currentRef.id);
-    // Get the parent document (catching any errors that arise).
-    currentRef = safeGet<DocumentReference?>(() => currentRef?.parent.parent);
-  }
-  // Reverse the list to get the correct ordering.
-  return docIds.reversed.join(_kDocIdDelimeter);
-}
-
 String? serializeParam(
   dynamic param,
-  ParamType paramType, [
+  ParamType paramType, {
   bool isList = false,
-]) {
+}) {
   try {
     if (param == null) {
       return null;
     }
     if (isList) {
       final serializedValues = (param as Iterable)
-          .map((p) => serializeParam(p, paramType, false))
+          .map((p) => serializeParam(p, paramType, isList: false))
           .where((p) => p != null)
           .map((p) => p!)
           .toList();
       return json.encode(serializedValues);
     }
+    String? data;
     switch (paramType) {
       case ParamType.int:
-        return param.toString();
+        data = param.toString();
       case ParamType.double:
-        return param.toString();
+        data = param.toString();
       case ParamType.String:
-        return param;
+        data = param;
       case ParamType.bool:
-        return param ? 'true' : 'false';
+        data = param ? 'true' : 'false';
       case ParamType.DateTime:
-        return (param as DateTime).millisecondsSinceEpoch.toString();
+        data = (param as DateTime).millisecondsSinceEpoch.toString();
       case ParamType.DateTimeRange:
-        return dateTimeRangeToString(param as DateTimeRange);
+        data = dateTimeRangeToString(param as DateTimeRange);
       case ParamType.LatLng:
-        return (param as LatLng).serialize();
+        data = (param as LatLng).serialize();
       case ParamType.Color:
-        return (param as Color).toCssString();
+        data = (param as Color).toCssString();
       case ParamType.FFPlace:
-        return placeToString(param as FFPlace);
+        data = placeToString(param as FFPlace);
       case ParamType.FFUploadedFile:
-        return uploadedFileToString(param as FFUploadedFile);
+        data = uploadedFileToString(param as FFUploadedFile);
       case ParamType.JSON:
-        return json.encode(param);
-      case ParamType.DocumentReference:
-        return _serializeDocumentReference(param as DocumentReference);
-      case ParamType.Document:
-        final reference = (param as dynamic).reference as DocumentReference;
-        return _serializeDocumentReference(reference);
+        data = json.encode(param);
+
+      case ParamType.DataStruct:
+        data = param is BaseStruct ? param.serialize() : null;
+
+      case ParamType.Enum:
+        data = (param is Enum) ? param.serialize() : null;
 
       case ParamType.SupabaseRow:
         return json.encode((param as SupabaseDataRow).data);
 
       default:
-        return null;
+        data = null;
     }
+    return data;
   } catch (e) {
     print('Error serializing parameter: $e');
     return null;
@@ -116,9 +108,9 @@ DateTimeRange? dateTimeRangeFromString(String dateTimeRangeStr) {
   );
 }
 
-LatLng? latLngFromString(String latLngStr) {
-  final pieces = latLngStr.split(',');
-  if (pieces.length != 2) {
+LatLng? latLngFromString(String? latLngStr) {
+  final pieces = latLngStr?.split(',');
+  if (pieces == null || pieces.length != 2) {
     return null;
   }
   return LatLng(
@@ -154,18 +146,6 @@ FFPlace placeFromString(String placeStr) {
 FFUploadedFile uploadedFileFromString(String uploadedFileStr) =>
     FFUploadedFile.deserialize(uploadedFileStr);
 
-DocumentReference _deserializeDocumentReference(
-  String refStr,
-  List<String> collectionNamePath,
-) {
-  var path = '';
-  final docIds = refStr.split(_kDocIdDelimeter);
-  for (int i = 0; i < docIds.length && i < collectionNamePath.length; i++) {
-    path += '/${collectionNamePath[i]}/${docIds[i]}';
-  }
-  return FirebaseFirestore.instance.doc(path);
-}
-
 enum ParamType {
   int,
   double,
@@ -178,17 +158,18 @@ enum ParamType {
   FFPlace,
   FFUploadedFile,
   JSON,
-  Document,
-  DocumentReference,
+
+  DataStruct,
+  Enum,
   SupabaseRow,
 }
 
 dynamic deserializeParam<T>(
   String? param,
   ParamType paramType,
-  bool isList, [
-  List<String>? collectionNamePath,
-]) {
+  bool isList, {
+  StructBuilder<T>? structBuilder,
+}) {
   try {
     if (param == null) {
       return null;
@@ -201,8 +182,12 @@ dynamic deserializeParam<T>(
       return paramValues
           .where((p) => p is String)
           .map((p) => p as String)
-          .map((p) =>
-              deserializeParam<T>(p, paramType, false, collectionNamePath))
+          .map((p) => deserializeParam<T>(
+                p,
+                paramType,
+                false,
+                structBuilder: structBuilder,
+              ))
           .where((p) => p != null)
           .map((p) => p! as T)
           .toList();
@@ -233,63 +218,100 @@ dynamic deserializeParam<T>(
         return uploadedFileFromString(param);
       case ParamType.JSON:
         return json.decode(param);
-      case ParamType.DocumentReference:
-        return _deserializeDocumentReference(param, collectionNamePath ?? []);
 
       case ParamType.SupabaseRow:
         final data = json.decode(param) as Map<String, dynamic>;
         switch (T) {
-          case DMedicationRegisterRow:
-            return DMedicationRegisterRow(data);
-          case DACHIInterventionsRow:
-            return DACHIInterventionsRow(data);
-          case DResearchesRow:
-            return DResearchesRow(data);
-          case AppointedResearchesRow:
-            return AppointedResearchesRow(data);
-          case ChambersRow:
-            return ChambersRow(data);
-          case CountriesRow:
-            return CountriesRow(data);
-          case Log001AdmissionRow:
-            return Log001AdmissionRow(data);
-          case BuildingRow:
-            return BuildingRow(data);
-          case BedsRow:
-            return BedsRow(data);
-          case HospitalStaffRow:
-            return HospitalStaffRow(data);
-          case DepartmentsRow:
-            return DepartmentsRow(data);
-          case PostmortemRow:
-            return PostmortemRow(data);
+          case RolesRow:
+            return RolesRow(data);
+          case LogPatientsCallsRow:
+            return LogPatientsCallsRow(data);
+          case PNursesRow:
+            return PNursesRow(data);
           case UsersIDsRolesRow:
             return UsersIDsRolesRow(data);
+          case ChatMessagesRow:
+            return ChatMessagesRow(data);
+          case PCeoRow:
+            return PCeoRow(data);
+          case DMedicationRegisterRow:
+            return DMedicationRegisterRow(data);
+          case PReceptionistsRow:
+            return PReceptionistsRow(data);
           case DICDDiagnosesRow:
             return DICDDiagnosesRow(data);
-          case OverallStatesRow:
-            return OverallStatesRow(data);
-          case DoctorsDiariesRow:
-            return DoctorsDiariesRow(data);
+          case DResearchesRow:
+            return DResearchesRow(data);
+          case LogDoctorRecCallsRow:
+            return LogDoctorRecCallsRow(data);
+          case PAdminsRow:
+            return PAdminsRow(data);
+          case DDepartmentsRow:
+            return DDepartmentsRow(data);
+          case PDoctorsRow:
+            return PDoctorsRow(data);
+          case RelativesRow:
+            return RelativesRow(data);
+          case SetOverallStatesRow:
+            return SetOverallStatesRow(data);
+          case IncapacityCertificatesRow:
+            return IncapacityCertificatesRow(data);
+          case InterventionCaseRow:
+            return InterventionCaseRow(data);
+          case PSanitarsRow:
+            return PSanitarsRow(data);
+          case PatientsInDepartmentsViewRow:
+            return PatientsInDepartmentsViewRow(data);
+          case Set0032857TreatmentResultRow:
+            return Set0032857TreatmentResultRow(data);
+          case DBedsRow:
+            return DBedsRow(data);
+          case AdmissionsRow:
+            return AdmissionsRow(data);
+          case DChambersRow:
+            return DChambersRow(data);
+          case DBuildingsRow:
+            return DBuildingsRow(data);
+          case UsersProfilesRow:
+            return UsersProfilesRow(data);
+          case PatientsCallsViewRow:
+            return PatientsCallsViewRow(data);
+          case AppointedResearchesRow:
+            return AppointedResearchesRow(data);
+          case PatientsRow:
+            return PatientsRow(data);
+          case DHospitalStaffRow:
+            return DHospitalStaffRow(data);
           case InterventionsRow:
             return InterventionsRow(data);
+          case DoctorsDiariesRow:
+            return DoctorsDiariesRow(data);
+          case DCountriesRow:
+            return DCountriesRow(data);
           case DDepartmentsCodesRow:
             return DDepartmentsCodesRow(data);
           case CovidTestsRow:
             return CovidTestsRow(data);
-          case PatientsRow:
-            return PatientsRow(data);
-          case RelatedPersonsRow:
-            return RelatedPersonsRow(data);
-          case InterventionCaseRow:
-            return InterventionCaseRow(data);
-          case AdmissionsRow:
-            return AdmissionsRow(data);
-          case IncapacityCertificatesRow:
-            return IncapacityCertificatesRow(data);
+          case Log001VisitorsRow:
+            return Log001VisitorsRow(data);
+          case PostmortemRow:
+            return PostmortemRow(data);
+          case ChatMessagesViewRow:
+            return ChatMessagesViewRow(data);
+          case DACHIInterventionsRow:
+            return DACHIInterventionsRow(data);
+          case UsersStatesRow:
+            return UsersStatesRow(data);
           default:
             return null;
         }
+
+      case ParamType.DataStruct:
+        final data = json.decode(param) as Map<String, dynamic>? ?? {};
+        return structBuilder != null ? structBuilder(data) : null;
+
+      case ParamType.Enum:
+        return deserializeEnum<T>(param);
 
       default:
         return null;
@@ -298,35 +320,4 @@ dynamic deserializeParam<T>(
     print('Error deserializing parameter: $e');
     return null;
   }
-}
-
-Future<dynamic> Function(String) getDoc(
-  List<String> collectionNamePath,
-  Serializer serializer,
-) {
-  return (String ids) => _deserializeDocumentReference(ids, collectionNamePath)
-      .get()
-      .then((s) => serializers.deserializeWith(serializer, serializedData(s)));
-}
-
-Future<List<T>> Function(String) getDocList<T>(
-  List<String> collectionNamePath,
-  Serializer<T> serializer,
-) {
-  return (String idsList) {
-    List<String> docIds = [];
-    try {
-      final ids = json.decode(idsList) as Iterable;
-      docIds = ids.where((d) => d is String).map((d) => d as String).toList();
-    } catch (_) {}
-    return Future.wait(
-      docIds.map(
-        (ids) => _deserializeDocumentReference(ids, collectionNamePath)
-            .get()
-            .then(
-              (s) => serializers.deserializeWith(serializer, serializedData(s)),
-            ),
-      ),
-    ).then((docs) => docs.where((d) => d != null).map((d) => d!).toList());
-  };
 }

@@ -26,6 +26,7 @@ abstract class SupabaseTable<T extends SupabaseDataRow> {
           .limit(1)
           .select<PostgrestMap?>()
           .maybeSingle()
+          .catchError((e) => print('Error querying row: $e'))
           .then((r) => [if (r != null) createRow(r)]);
 
   Future<T> insert(Map<String, dynamic> data) => SupaFlow.client
@@ -74,7 +75,8 @@ class PostgresTime {
 
   static PostgresTime? tryParse(String formattedString) {
     final datePrefix = DateTime.now().toIso8601String().split('T').first;
-    return PostgresTime(DateTime.tryParse('${datePrefix}T$formattedString'));
+    return PostgresTime(
+        DateTime.tryParse('${datePrefix}T$formattedString')?.toLocal());
   }
 
   String? toIso8601String() {
